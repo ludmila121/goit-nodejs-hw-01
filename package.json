@@ -1,17 +1,21 @@
 {
   "name": "goit-nodejs-hw-01",
   "version": "1.0.0",
-  "description": "",
+  "description": "Домашня робота 1",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
-    "test": "node tests.js",
-    "dev": "index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "start:dev": "nodemon index"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "commander": "^11.0.0",
+    "nanoid": "^4.0.2"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.22"
   }
 }

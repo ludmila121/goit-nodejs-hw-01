@@ -1,33 +1,42 @@
-const http = require('http');
-const port = process.env.PORT || 300
+const contacts = require('./contacts');
+const {Command} = require("commander");
+const program = new Command();
+program
+.option("-a, --action <type>", "choose action")
+.option("-i, --id <type>", "user id")
+.option("-n, --name <type>", "user name")
+.option("-e, --email <type>", "user email")
+.option("-p, --phone <type>", "user phone");
 
-const hostname = '127.0.0.1';
+program.parse(process.argv);
+const argv = program.opts();
 
-const server = http.createServer((req, res) => {
-/* Приводим URL к единому виду, удаляя
-строку запроса, необязательную косую черту
-в конце строки и переводя в нижний регистр, */
-const path = req.url.replace(/\/?(?:\?.*)?$/, '').toLowerCase()
-switch (path){
-  case '':
-    res.writeHead(200, { 'Content-Type': 'text/plain'})
-    res.end('Homepage')
-    break
-  case '/about':
-    res.writeHead(200, {'Content-Type': 'text/plain'})
-    res.end('About')
-    break
-  default: 
-  res.writeHead(404, {'Content_Type': 'text/plain'})
-  break  
+async function invokeAction({ action, id, name, email, phone }) {
+  switch (action) {
+    case 'list':
+      const allContacts = await contacts.listContacts();
+      console.log(allContacts);
+      break;
 
-} }) 
+    case 'get':
+      const contact = await contacts.getContactById(id);
+      console.log(contact);
+      break;
 
-/* res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
-});
- */
-server.listen(port, () => 
-  console.log(`Server running at http://${hostname}:${port}/`)
-);
+    case 'add':
+      const newContact = await contacts.addContact(name, email, phone);
+      console.log(newContact);
+      break;
+
+    case 'remove':
+      const removeContact = await contacts.removeContact(id);
+      console.log(removeContact);
+      break;
+
+    default:
+      console.warn('\x1B[31m Unknown action type!');
+  }
+}
+
+invokeAction(argv);
+
